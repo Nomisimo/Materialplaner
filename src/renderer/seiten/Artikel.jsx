@@ -161,10 +161,17 @@ export function ArtikelDetail({ params }) {
 /** FA-05: Reservierungen (vorgemerkt/fest) im Zeitraum. */
 function Reservierungen({ artikelId }) {
   const { api } = useLager();
-  const r = useDaten(() => api.get(`/api/v1/artikel/${artikelId}/reservierungen`).catch((e) => (e.status === 404 ? null : Promise.reject(e))), [artikelId]);
+  const [zr, setZr] = useState({ von: "", bis: "" });
+  const qs = new URLSearchParams(Object.entries(zr).filter(([, v]) => v)).toString();
+  const r = useDaten(() => api.get(`/api/v1/artikel/${artikelId}/reservierungen${qs ? `?${qs}` : ""}`).catch((e) => (e.status === 404 ? null : Promise.reject(e))), [artikelId, qs]);
   useLive(["angebot", "projekt"], () => r.laden());
   return (
     <Section titel="Reservierungen" icon="CalendarDays">
+      <div className="lp-raster">
+        <Feld label="Von" hinweis="Leer = ab heute"><Eingabe type="date" value={zr.von} onChange={(e) => setZr({ ...zr, von: e.target.value })} /></Feld>
+        <Feld label="Bis" hinweis="Leer = ohne Ende"><Eingabe type="date" value={zr.bis} onChange={(e) => setZr({ ...zr, bis: e.target.value })} /></Feld>
+      </div>
+      {r.fehler && <Meldung level="error" text={r.fehler} />}
       {!r.daten ? <p className="lp-hinweis">Reservierungen erscheinen, sobald Angebote dieses Material enthalten.</p> :
         <Tabelle zeilen={r.daten} leer="Keine Reservierungen." spalten={[
           { titel: "Projekt", wert: (x) => `${x.projekt_nummer} ${x.projekt_name}` }, { titel: "Zeitraum", wert: (x) => `${x.von_text} – ${x.bis_text}` },
