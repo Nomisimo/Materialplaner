@@ -11,7 +11,7 @@ import { PIKTOGRAMM_LISTE } from "@lager/domain/plansymbole.js";
 
 const LEER = { name: "", kategorie_id: null, hersteller: "", beschreibung: "", aktiv: true, preis_tag: 0, folgetag_prozent: null, verkaeuflich: false,
   verkaufspreis: null, mengenschritt: 1, inhalt_artikel_id: null, verpackungseinheit: null, zeitmodell: "tag", preis_erweitert: null,
-  bestand: 0, mindestbestand: null, einheit: "Stück", pruefpflichtig: true, pruef_intervall_monate: 12, plansymbol: "", laenge_m: null };
+  bestand: 0, mindestbestand: null, einheit: "Stück", pruefpflichtig: true, pruef_intervall_monate: 12, wartung_intervall_monate: null, wartung_text: "", plansymbol: "", laenge_m: null };
 
 export function ArtikelFormular({ params }) {
   const { api, navigiere } = useLager();
@@ -72,6 +72,8 @@ export function ArtikelFormular({ params }) {
           {sichtbar.has("verkaufspreis") && w.verkaeuflich && <Feld label="Verkaufspreis" fehler={f.fehler.verkaufspreis}><GeldEingabe cent={w.verkaufspreis} onCent={f.setze("verkaufspreis")} /></Feld>}
           {sichtbar.has("pruefpflichtig") && <Feld label="Prüfung"><Toggle checked={w.pruefpflichtig} onChange={f.setze("pruefpflichtig")} label="prüfpflichtig" /></Feld>}
           {sichtbar.has("pruef_intervall_monate") && w.pruefpflichtig && <Feld label="Prüfintervall (Monate)" fehler={f.fehler.pruef_intervall_monate}><Eingabe type="number" min="1" max="120" value={w.pruef_intervall_monate} onChange={zahl("pruef_intervall_monate")} /></Feld>}
+          {sichtbar.has("wartung_intervall_monate") && <Feld label="Wartungsintervall (Monate)" fehler={f.fehler.wartung_intervall_monate} hinweis="Für Wartung ohne Prüfpflicht, leer = keine"><Eingabe type="number" min="1" max="120" value={w.wartung_intervall_monate} onChange={zahl("wartung_intervall_monate")} /></Feld>}
+          {sichtbar.has("wartung_text") && w.wartung_intervall_monate && <Feld label="Was wird gewartet?"><Eingabe value={w.wartung_text} onChange={f.setze("wartung_text")} placeholder="z. B. Lüfter reinigen" /></Feld>}
           {sichtbar.has("plansymbol") && <Feld label="Plan-Symbol (yEd)" fehler={f.fehler.plansymbol} hinweis="Piktogramm für die Symbolbibliothek"><Auswahl aria-label="Plan-Symbol" leer="automatisch (aus dem Namen)" value={w.plansymbol} onChange={f.setze("plansymbol")} optionen={PIKTOGRAMM_LISTE} /></Feld>}
           <Feld label="Status"><Toggle checked={w.aktiv} onChange={f.setze("aktiv")} label="aktiv" /></Feld>
           <Feld label="Beschreibung" breit><Textfeld value={w.beschreibung} onChange={f.setze("beschreibung")} /></Feld>

@@ -7,6 +7,8 @@ import { EtikettenSeite, BestellungNeu, BestellungDetail, VorlageDesigner, Etike
 import { KabelAssistent } from "./seiten/KabelAssistent.jsx";
 import { ScanSeite, Packansicht, Rueckgabeansicht } from "./seiten/Scannen.jsx";
 import { LadezonenSeite } from "./seiten/Ladezonen.jsx";
+import { InventurListe, InventurDetail } from "./seiten/Inventur.jsx";
+import { ReparaturSeite } from "./seiten/Reparatur.jsx";
 import { normalisiereCode, istGeraetecode, normalisiereProjektcode } from "@lager/domain/codes.js";
 
 import { SuchSeite } from "@lager/ui/uebersicht.jsx";
@@ -33,6 +35,9 @@ export const SEITEN = [
   { muster: "/projekte/:id/packen", Komponente: Packansicht },
   { muster: "/projekte/:id/rueckgabe", Komponente: Rueckgabeansicht },
   { muster: "/zonen", Komponente: LadezonenSeite },
+  { muster: "/inventur", Komponente: InventurListe },
+  { muster: "/inventur/:id", Komponente: InventurDetail },
+  { muster: "/reparatur", Komponente: ReparaturSeite },
   { muster: "/plansymbole", Komponente: PlansymboleSeite },
   { muster: "/suche", Komponente: SuchSeite },
   { muster: "/verwaltung", Komponente: VerwaltungStart },

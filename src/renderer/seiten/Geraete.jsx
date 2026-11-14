@@ -59,6 +59,8 @@ export function GeraetDetail({ params }) {
   const aktion = async (fn) => { try { const r = await fn(); setMeldung({ level: r.level || "success", text: r.text }); d.laden(); return true; } catch (e) { setMeldung({ level: "error", text: fehlerText(e) }); return false; } };
   return (
     <Seite titel={g.code} untertitel={`${g.artikel} · ${g.kategorie}`} aktionen={<>
+      {darfP && !["defekt", "reparatur", "ausgemustert", "verkauft"].includes(g.status) && <Knopf icon="Wrench" onClick={() => navigiere(`/reparatur?code=${encodeURIComponent(g.code)}`)}>Defekt melden</Knopf>}
+      {["defekt", "reparatur"].includes(g.status) && <Knopf icon="Wrench" onClick={() => navigiere("/reparatur")}>Zur Reparatur</Knopf>}
       {darfP && g.status !== "vermisst" && uebergangErlaubt(g.status, "vermisst") && <Knopf icon="AlertTriangle" onClick={() => aktion(() => api.post(`/api/v1/geraete/${g.id}/vermisst`))}>Vermisst</Knopf>}
       {darfP && g.status === "vermisst" && <Knopf icon="Check" onClick={() => aktion(() => api.post(`/api/v1/geraete/${g.id}/gefunden`))}>Gefunden</Knopf>}
       {darfP && g.pruefpflichtig && <Knopf icon="ShieldCheck" onClick={() => aktion(() => api.post(`/api/v1/geraete/${g.id}/geprueft`))}>Heute geprüft</Knopf>}
@@ -75,6 +77,7 @@ export function GeraetDetail({ params }) {
           <div><div className="lp-label">Status</div><StatusChip s={g.status} /></div>
           <div><div className="lp-label">Prüfung</div><PruefBadge s={g.pruefstatus} />{g.letzte_pruefung && <div className="lp-meta">zuletzt {datumAnzeige(g.letzte_pruefung)} · nächste {datumAnzeige(g.naechste_pruefung)}</div>}</div>
           <div><div className="lp-label">Projekt</div>{g.projekt_id ? <a href="#" onClick={(e) => { e.preventDefault(); oeffneAndereApp(`/projekte/${g.projekt_id}`); }}>{g.projekt_nummer || `Projekt ${g.projekt_id}`}</a> : "–"}</div>
+          {g.wartung_intervall_monate && <div><div className="lp-label">Wartung</div>{g.wartung_text || "Wartung"} alle {g.wartung_intervall_monate} Monate<div className="lp-meta">zuletzt {g.letzte_wartung ? datumAnzeige(g.letzte_wartung) : "nie"}</div></div>}
           <div><div className="lp-label">Liegt in Case</div>{g.case_code ? <a href={`#/geraete/${g.case_id}`}>{g.case_code}</a> : "–"}</div>
           <div><div className="lp-label">Seriennummer</div>{g.seriennummer || "–"}</div>
           <div><div className="lp-label">Alte Prüf-ID</div>{g.alte_pruef_id || "–"}</div>
