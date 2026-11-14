@@ -122,8 +122,10 @@ export function BestellungDetail({ params }) {
       aktionen={<>
         <Knopf icon="Download" onClick={() => ladeHerunter(api, `/api/v1/etiketten/bestellungen/${b.id}/liste.pdf`, `${b.nummer}.pdf`).catch((e) => setMeldung({ level: "error", text: fehlerText(e) }))}>Liste (PDF)</Knopf>
         <Knopf icon="Download" onClick={() => ladeHerunter(api, `/api/v1/etiketten/bestellungen/${b.id}/liste.csv${ohneBindestrich ? "?ohne_bindestrich=1" : ""}`, `${b.nummer}.csv`).catch((e) => setMeldung({ level: "error", text: fehlerText(e) }))}>Liste (CSV)</Knopf>
-        {darf && b.geliefert === 0 && <Knopf art="gefahr" icon="Trash2" onClick={() => fragen({ titel: "Bestellung löschen?", text: `${b.nummer} wird gelöscht. Die reservierten Codes werden nicht neu vergeben.`, knopf: "Löschen",
-          onJa: async () => { if (await aktion(() => api.del(`/api/v1/etiketten/bestellungen/${b.id}`))) navigiere("/etiketten"); } })}>Löschen</Knopf>}
+        {darf && b.geliefert === 0 && <Knopf art="gefahr" icon="Trash2" onClick={async () => {
+          if (!(await fragen({ titel: "Bestellung löschen?", text: `${b.nummer} wird gelöscht. Die reservierten Codes werden nicht neu vergeben.`, knopf: "Löschen" }))) return;
+          if (await aktion(() => api.del(`/api/v1/etiketten/bestellungen/${b.id}`))) navigiere("/etiketten");
+        }}>Löschen</Knopf>}
       </>}>
       {dialog}
       {meldung && <Meldung {...meldung} onSchliessen={() => setMeldung(null)} />}
