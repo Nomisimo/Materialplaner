@@ -31,6 +31,7 @@ export function ArtikelFormular({ params }) {
     const r = neu ? await api.post("/api/v1/artikel", daten) : await api.put(`/api/v1/artikel/${params.id}`, daten);
     const id = r.artikel.id;
     if (neu && r.geraete?.codes?.length) navigiere(`/etiketten/druck?codes=${r.geraete.codes.join(",")}`); // R-72 qr: Etikettendruck öffnet
+    else if (neu && r.bestellung) navigiere(`/etiketten/bestellungen/${r.bestellung.id}`); // R-72 bestellen
     else navigiere(`/material/${id}`);
     return r;
   });

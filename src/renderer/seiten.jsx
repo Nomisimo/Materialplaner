@@ -3,17 +3,25 @@ import { Startseite } from "./seiten/Start.jsx";
 import { MaterialListe } from "./seiten/Material.jsx";
 import { ArtikelFormular, ArtikelDetail } from "./seiten/Artikel.jsx";
 import { GeraeteListe, GeraetDetail, GeraetPerCode } from "./seiten/Geraete.jsx";
+import { EtikettenSeite, BestellungNeu, BestellungDetail, VorlageDesigner, EtikettenDruck } from "./seiten/Etiketten.jsx";
+import { KabelAssistent } from "./seiten/KabelAssistent.jsx";
 import { normalisiereCode, istGeraetecode, normalisiereProjektcode } from "@lager/domain/codes.js";
 
 export const SEITEN = [
   { muster: "/", Komponente: Startseite },
   { muster: "/material", Komponente: MaterialListe },
   { muster: "/material/neu", Komponente: ArtikelFormular },
+  { muster: "/material/kabel-assistent", Komponente: KabelAssistent },
   { muster: "/material/:id/bearbeiten", Komponente: ArtikelFormular },
   { muster: "/material/:id", Komponente: ArtikelDetail },
   { muster: "/geraete", Komponente: GeraeteListe },
   { muster: "/geraete/code/:code", Komponente: GeraetPerCode },
   { muster: "/geraete/:id", Komponente: GeraetDetail },
+  { muster: "/etiketten", Komponente: EtikettenSeite },
+  { muster: "/etiketten/druck", Komponente: EtikettenDruck },
+  { muster: "/etiketten/bestellungen/neu", Komponente: BestellungNeu },
+  { muster: "/etiketten/bestellungen/:id", Komponente: BestellungDetail },
+  { muster: "/etiketten/vorlagen/:id", Komponente: VorlageDesigner },
 ];
 
 /** Globales Codefeld (FA-16): Gerät → hier, Projekt → Productionplaner. Vollständig in Phase 6. */
