@@ -1,4 +1,5 @@
 // Seiten des Materialplaners (Menü UI-1: Start · Material & Lager · System).
+import { AenderungsSeite } from "@lager/ui/aenderungen.jsx";
 import { Startseite } from "./seiten/Start.jsx";
 import { MaterialListe } from "./seiten/Material.jsx";
 import { ArtikelFormular, ArtikelDetail } from "./seiten/Artikel.jsx";
@@ -46,6 +47,7 @@ export const SEITEN = [
   { muster: "/verwaltung/einstellungen", Komponente: EinstellungenSeite },
   { muster: "/verwaltung/sicherung", Komponente: SicherungSeite },
   { muster: "/verwaltung/sicherheit", Komponente: SicherheitSeite },
+  { muster: "/verwaltung/aenderungen", Komponente: AenderungsSeite },
   { muster: "/verwaltung/system", Komponente: SystemSeite },
   { muster: "/verwaltung/scanner", Komponente: ScannerVerwaltung },
   { muster: "/verwaltung/arbeitsplaetze", Komponente: ArbeitsplatzVerwaltung },

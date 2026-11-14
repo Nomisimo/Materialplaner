@@ -1,4 +1,5 @@
 // R-71 Material aufnehmen / bearbeiten (eine Maske, Felder je Art), R-72 Kennzeichnung, FA-02 löschen, FA-04 Bestand, FA-05 Detail.
+import { AenderungsVerlauf } from "@lager/ui/aenderungen.jsx";
 import React, { useEffect, useState } from "react";
 import { Seite, Section, Knopf, Feld, Eingabe, Auswahl, Textfeld, Toggle, Meldung, Tabelle, GeldEingabe, useDaten, useFormular, useBestaetigung, Badge } from "@lager/ui/bausteine.jsx";
 import { useLager, useLive } from "@lager/ui/huelle.jsx";
@@ -147,6 +148,7 @@ export function ArtikelDetail({ params }) {
         ]} />
       </Section>}
       <Reservierungen artikelId={a.id} />
+      <AenderungsVerlauf tabelle="artikel" id={a.id} />
       {dialog}
     </Seite>
   );
