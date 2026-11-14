@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Seite, Section, Knopf, Tabelle, Auswahl, Feld, Eingabe, Meldung, Badge, Leerzustand, Toggle, useDaten, useBestaetigung } from "@lager/ui/bausteine.jsx";
 import { useLager, useLive } from "@lager/ui/huelle.jsx";
 import { ScanPanel } from "@lager/ui/scannen.jsx";
+import { TaschenKarte, FunktionstestKarte, useFunktionstestSchalter } from "@lager/ui/rueckgabe.jsx";
 import { ladeHerunter } from "@lager/ui/download.js";
 import { fehlerText } from "@lager/ui/texte.js";
 import { SCAN_MODI } from "@lager/domain/scannen.js";
@@ -12,59 +13,6 @@ import { datumAnzeige, zeitpunktAnzeige } from "@lager/domain/zeit.js";
 const MODUS_OPT = Object.entries(SCAN_MODI).map(([wert, titel]) => ({ wert, titel }));
 const mengeText = (m) => String(Math.round(Number(m) * 100) / 100).replace(".", ",");
 const zeitraum = (p) => (p.beginn ? `${datumAnzeige(p.beginn)}${p.ende && p.ende !== p.beginn ? ` – ${datumAnzeige(p.ende)}` : ""}` : "ohne Termin");
-
-/** Aktive Tasche bei der Rückgabe (R-46/R-48): Stand, offene Teile, „Offene als vermisst melden“, „Tasche beenden“. */
-function TaschenKarte({ tasche, onNeu, onEnde }) {
-  const { api } = useLager();
-  const [fragen, dialog] = useBestaetigung();
-  const [meldung, setMeldung] = useState(null);
-  return (
-    <Section titel={`Aktive Tasche ${tasche.code}`} icon="Box" aktionen={<>
-      {tasche.offen.length > 0 && <Knopf icon="AlertTriangle" onClick={async () => {
-        if (!(await fragen({ titel: "Offene als vermisst melden?", knopf: "Als vermisst melden", text: `${tasche.offen.length} Teil(e) wurden nicht zurückgescannt: ${tasche.offen.join(", ")}. Sie bleiben am Projekt und gelten als vermisst, bis sie wieder auftauchen.` }))) return;
-        try { const r = await api.post("/api/v1/vermisst", { codes: tasche.offen, tasche: tasche.code }); setMeldung({ level: "warning", text: r.text }); onNeu(r.tasche); }
-        catch (e) { setMeldung({ level: "error", text: fehlerText(e) }); }
-      }}>Offene als vermisst melden</Knopf>}
-      <Knopf icon="Check" onClick={onEnde}>Tasche beenden</Knopf></>}>
-      {dialog}
-      {meldung && <Meldung {...meldung} onSchliessen={() => setMeldung(null)} />}
-      <p style={{ margin: 0 }} data-testid="tasche-stand"><strong>{tasche.name}: {tasche.anzahl} von {tasche.soll || "?"}</strong> Teilen eingetragen.
-        {tasche.offen.length ? ` Noch nicht zurück: ${tasche.offen.join(", ")}.` : " Alle Teile sind zurück."}</p>
-    </Section>
-  );
-}
-
-const FT_KEY = "lager-funktionstest";
-/** R-47: Funktionstest nach jedem Rückgabe-Scan, an diesem Gerät ein-/ausschaltbar. */
-function useFunktionstestSchalter() {
-  const [an, setAn] = useState(() => { try { return localStorage.getItem(FT_KEY) === "1"; } catch { return false; } });
-  return [an, (v) => { setAn(v); try { localStorage.setItem(FT_KEY, v ? "1" : "0"); } catch { /* privat */ } }];
-}
-
-/** R-47 Funktionstest für das zuletzt zurückgebuchte Gerät: „bestanden“ oder „Mangel“ mit Notiz. */
-function FunktionstestKarte({ code, onFertig }) {
-  const { api } = useLager();
-  const [mangel, setMangel] = useState(false);
-  const [notiz, setNotiz] = useState("");
-  const [fehler, setFehler] = useState(null);
-  const sende = async (ergebnis) => {
-    setFehler(null);
-    try { const r = await api.post("/api/v1/pruefung", { code, ergebnis, notiz }); onFertig({ level: ergebnis === "ok" ? "success" : "warning", text: r.text }); }
-    catch (e) { setFehler(fehlerText(e)); }
-  };
-  return (
-    <Section titel={`Funktionstest ${code}`} icon="Wrench" aktionen={<Knopf klein art="geist" onClick={() => onFertig(null)}>Überspringen</Knopf>}>
-      {fehler && <Meldung level="error" text={fehler} />}
-      {!mangel ? <div className="lp-zeile">
-        <Knopf art="primaer" icon="CheckCircle2" onClick={() => sende("ok")}>Bestanden</Knopf>
-        <Knopf icon="AlertTriangle" onClick={() => setMangel(true)}>Mangel</Knopf>
-      </div> : <div>
-        <Feld label="Was ist kaputt?" pflicht hinweis="Landet mit Datum in den Notizen am Gerät"><Eingabe value={notiz} autoFocus onChange={(e) => setNotiz(e.target.value)} /></Feld>
-        <div className="lp-zeile"><Knopf art="primaer" icon="Save" onClick={() => sende("mangel")}>Mangel speichern</Knopf><Knopf onClick={() => setMangel(false)}>Zurück</Knopf></div>
-      </div>}
-    </Section>
-  );
-}
 
 /* ── Scan-Seite (FA-15) ── */
 export function ScanSeite({ query }) {

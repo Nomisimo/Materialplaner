@@ -19,7 +19,7 @@ export function LadezonenSeite() {
   const [fragen, dialog] = useBestaetigung();
   const f = useFormular(LEER);
   const laden = () => { zonen.laden(); prio.laden(); };
-  useLive(["zonen", "projekt", "packen"], laden);
+  useLive(["zone", "projekt", "packen"], laden);
   const darf = nutzer.admin || nutzer.rechte.zonen === "w";
   const aktion = async (fn) => { setMeldung(null); try { const r = await fn(); setMeldung({ level: r.level || "success", text: r.text }); laden(); } catch (e) { setMeldung({ level: "error", text: fehlerText(e) }); } };
   const oeffne = (z) => { f.setWerte(z ? { ...LEER, ...z, flaeche_m2: z.flaeche_m2 ?? "" } : LEER); f.setFehler({}); f.setMeldung(null); setForm(z || {}); };

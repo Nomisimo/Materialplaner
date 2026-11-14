@@ -9,7 +9,7 @@ import { ScanSeite, Packansicht, Rueckgabeansicht } from "./seiten/Scannen.jsx";
 import { LadezonenSeite } from "./seiten/Ladezonen.jsx";
 import { normalisiereCode, istGeraetecode, normalisiereProjektcode } from "@lager/domain/codes.js";
 
-import { VerwaltungStart, ScannerVerwaltung } from "@lager/ui/verwaltung.jsx";
+import { VerwaltungStart, ScannerVerwaltung, ArbeitsplatzVerwaltung } from "@lager/ui/verwaltung.jsx";
 
 export const SEITEN = [
   { muster: "/", Komponente: Startseite },
@@ -32,6 +32,7 @@ export const SEITEN = [
   { muster: "/zonen", Komponente: LadezonenSeite },
   { muster: "/verwaltung", Komponente: VerwaltungStart },
   { muster: "/verwaltung/scanner", Komponente: ScannerVerwaltung },
+  { muster: "/verwaltung/arbeitsplaetze", Komponente: ArbeitsplatzVerwaltung },
 ];
 
 /** Globales Codefeld (FA-16): Gerät → hier, Projekt → Productionplaner. Vollständig in Phase 6. */
