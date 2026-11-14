@@ -5,7 +5,10 @@ import { ArtikelFormular, ArtikelDetail } from "./seiten/Artikel.jsx";
 import { GeraeteListe, GeraetDetail, GeraetPerCode } from "./seiten/Geraete.jsx";
 import { EtikettenSeite, BestellungNeu, BestellungDetail, VorlageDesigner, EtikettenDruck } from "./seiten/Etiketten.jsx";
 import { KabelAssistent } from "./seiten/KabelAssistent.jsx";
+import { ScanSeite, Packansicht } from "./seiten/Scannen.jsx";
 import { normalisiereCode, istGeraetecode, normalisiereProjektcode } from "@lager/domain/codes.js";
+
+import { VerwaltungStart, ScannerVerwaltung } from "@lager/ui/verwaltung.jsx";
 
 export const SEITEN = [
   { muster: "/", Komponente: Startseite },
@@ -22,6 +25,10 @@ export const SEITEN = [
   { muster: "/etiketten/bestellungen/neu", Komponente: BestellungNeu },
   { muster: "/etiketten/bestellungen/:id", Komponente: BestellungDetail },
   { muster: "/etiketten/vorlagen/:id", Komponente: VorlageDesigner },
+  { muster: "/scan", Komponente: ScanSeite },
+  { muster: "/projekte/:id/packen", Komponente: Packansicht },
+  { muster: "/verwaltung", Komponente: VerwaltungStart },
+  { muster: "/verwaltung/scanner", Komponente: ScannerVerwaltung },
 ];
 
 /** Globales Codefeld (FA-16): Gerät → hier, Projekt → Productionplaner. Vollständig in Phase 6. */
