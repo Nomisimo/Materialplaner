@@ -10,6 +10,7 @@ import { LadezonenSeite } from "./seiten/Ladezonen.jsx";
 import { normalisiereCode, istGeraetecode, normalisiereProjektcode } from "@lager/domain/codes.js";
 
 import { SuchSeite } from "@lager/ui/uebersicht.jsx";
+import { PlansymboleSeite } from "./seiten/Plansymbole.jsx";
 import { BenutzerVerwaltung, RollenVerwaltung, EinstellungenSeite, SicherungSeite, SicherheitSeite, SystemSeite } from "@lager/ui/verwaltung-system.jsx";
 import { VerwaltungStart, ScannerVerwaltung, ArbeitsplatzVerwaltung } from "@lager/ui/verwaltung.jsx";
 
@@ -32,6 +33,7 @@ export const SEITEN = [
   { muster: "/projekte/:id/packen", Komponente: Packansicht },
   { muster: "/projekte/:id/rueckgabe", Komponente: Rueckgabeansicht },
   { muster: "/zonen", Komponente: LadezonenSeite },
+  { muster: "/plansymbole", Komponente: PlansymboleSeite },
   { muster: "/suche", Komponente: SuchSeite },
   { muster: "/verwaltung", Komponente: VerwaltungStart },
   { muster: "/verwaltung/benutzer", Komponente: BenutzerVerwaltung },
