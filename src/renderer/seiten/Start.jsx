@@ -1,14 +1,15 @@
+// Startseite (FA-35) des Materialplaners: Lager, Prüfungen, Packen und Rückgabe zuerst.
 import React from "react";
-import { Seite, Section, Meldung } from "@lager/ui/bausteine.jsx";
-import { useLager } from "@lager/ui/huelle.jsx";
+import { Startseite as Uebersicht } from "@lager/ui/uebersicht.jsx";
+
+const SCHNELL = [
+  { titel: "Code scannen", icon: "ScanLine", pfad: "/scan" },
+  { titel: "Geräte", icon: "Package", pfad: "/geraete" },
+  { titel: "Material", icon: "Boxes", pfad: "/material" },
+  { titel: "Ladezonen", icon: "LayoutGrid", pfad: "/zonen" },
+  { titel: "Etiketten", icon: "Tag", pfad: "/etiketten" },
+];
 
 export function Startseite() {
-  const { nutzer } = useLager();
-  return (
-    <Seite titel="Übersicht" untertitel="Material und Lager">
-      <Section titel={`Hallo ${nutzer.name || nutzer.benutzername}`} icon="Home">
-        <Meldung level="info" text="Die Startseite mit Kacheln für Lager, Packen und Rückgabe folgt (FA-35)." />
-      </Section>
-    </Seite>
-  );
+  return <Uebersicht untertitel="Material und Lager" schnell={SCHNELL} />;
 }

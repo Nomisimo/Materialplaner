@@ -9,6 +9,7 @@ import { ScanSeite, Packansicht, Rueckgabeansicht } from "./seiten/Scannen.jsx";
 import { LadezonenSeite } from "./seiten/Ladezonen.jsx";
 import { normalisiereCode, istGeraetecode, normalisiereProjektcode } from "@lager/domain/codes.js";
 
+import { SuchSeite } from "@lager/ui/uebersicht.jsx";
 import { VerwaltungStart, ScannerVerwaltung, ArbeitsplatzVerwaltung } from "@lager/ui/verwaltung.jsx";
 
 export const SEITEN = [
@@ -30,6 +31,7 @@ export const SEITEN = [
   { muster: "/projekte/:id/packen", Komponente: Packansicht },
   { muster: "/projekte/:id/rueckgabe", Komponente: Rueckgabeansicht },
   { muster: "/zonen", Komponente: LadezonenSeite },
+  { muster: "/suche", Komponente: SuchSeite },
   { muster: "/verwaltung", Komponente: VerwaltungStart },
   { muster: "/verwaltung/scanner", Komponente: ScannerVerwaltung },
   { muster: "/verwaltung/arbeitsplaetze", Komponente: ArbeitsplatzVerwaltung },
