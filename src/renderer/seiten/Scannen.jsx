@@ -98,7 +98,7 @@ export function Packansicht({ params }) {
       </>}>
       {dialog}
       {meldung && <Meldung {...meldung} onSchliessen={() => setMeldung(null)} />}
-      {p.gepackt_am && <Meldung level="success" text={`Verladen am ${zeitpunktAnzeige(p.gepackt_am)}${p.gepackt_von_name ? ` von ${p.gepackt_von_name}` : ""}. Weitere Scans bleiben möglich (Nachpacken).`} />}
+      {p.gepackt_am && meldung?.level !== "success" && <Meldung level="success" text={`Verladen am ${zeitpunktAnzeige(p.gepackt_am)}${p.gepackt_von_name ? ` von ${p.gepackt_von_name}` : ""}. Weitere Scans bleiben möglich (Nachpacken).`} />}
       <Section titel="Fortschritt" icon="ListChecks">
         <div className="lp-zeile" style={{ alignItems: "center" }}>
           <div className="lp-fortschritt" style={{ flex: 1 }} role="progressbar" aria-valuenow={s.fortschritt} aria-valuemin={0} aria-valuemax={100} aria-label="Packfortschritt"><div style={{ width: `${s.fortschritt}%` }} /></div>
