@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Seite, Section, Knopf, Tabelle, Eingabe, Auswahl, Feld, Meldung, Tabs, useDaten, Icon, useBestaetigung, Textfeld, Toggle, Badge, Leerzustand } from "@lager/ui/bausteine.jsx";
+import { plattform } from "@lager/ui/plattform.js";
 import { useLager, useLive } from "@lager/ui/huelle.jsx";
 import { fehlerText } from "@lager/ui/texte.js";
 import { ladeHerunter } from "@lager/ui/download.js";
@@ -352,7 +353,8 @@ export function EtikettenDruck({ query }) {
     setBogen(g);
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     try {
-      const r = window.lagerShell?.drucken ? await window.lagerShell.drucken({ breite_mm: g.breite_mm, hoehe_mm: g.hoehe_mm, titel: "Etiketten" }) : (window.print(), { ok: true });
+      // Desktop: druckt den Bogen mit Seitengröße der Vorlage; Browser: Druckfenster mit je einem Etikett pro Seite (WEB-04)
+      const r = await plattform.drucken({ breite_mm: g.breite_mm, hoehe_mm: g.hoehe_mm, titel: "Etiketten", seiten: g.etiketten.map((e) => e.svg) });
       setMeldung(r.ok ? { level: "success", text: `${g.etiketten.length} Etikett(en) ${g.breite_mm} × ${g.hoehe_mm} mm an den Drucker gesendet.` } : { level: r.abgebrochen ? "info" : "error", text: r.text });
     } catch (e) { setMeldung({ level: "error", text: `Drucken fehlgeschlagen: ${e.message}. Prüfe den Drucker und versuche es erneut.` }); }
     finally { setBogen(null); }
@@ -376,7 +378,9 @@ export function EtikettenDruck({ query }) {
       {bogen && createPortal(<div className="lp-druckbogen" aria-hidden="true">
         {bogen.etiketten.map((e) => <div key={e.code} className="lp-druckseite" style={{ width: `${e.breite_mm}mm`, height: `${e.hoehe_mm}mm` }} dangerouslySetInnerHTML={{ __html: e.svg }} />)}
       </div>, document.body)}
-      {codes.length > 0 && !d.laedt && <p className="lp-hinweis"><Icon name="Info" size={14} /> Etikettendrucker (z. B. Brother/Zebra): Wähle im Druckdialog das Etikettenformat; die Seitengröße kommt aus der Vorlage.</p>}
+      {codes.length > 0 && !d.laedt && <p className="lp-hinweis" data-testid="druck-hinweis"><Icon name="Info" size={14} /> {plattform.istWeb
+        ? "Im Browser öffnet „Drucken“ das Druckfenster des Browsers mit der Seitengröße der Vorlage. Direktdruck auf den Etikettendrucker gibt es nur in der Desktop-App."
+        : "Etikettendrucker (z. B. Brother/Zebra): Wähle im Druckdialog das Etikettenformat; die Seitengröße kommt aus der Vorlage."}</p>}
     </Seite>
   );
 }
