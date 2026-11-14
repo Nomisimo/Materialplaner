@@ -12,12 +12,13 @@ import { PIKTOGRAMM_LISTE } from "@lager/domain/plansymbole.js";
 
 const LEER = { name: "", kategorie_id: null, hersteller: "", beschreibung: "", aktiv: true, preis_tag: 0, folgetag_prozent: null, verkaeuflich: false,
   verkaufspreis: null, mengenschritt: 1, inhalt_artikel_id: null, verpackungseinheit: null, zeitmodell: "tag", preis_erweitert: null,
-  bestand: 0, mindestbestand: null, einheit: "Stück", pruefpflichtig: true, pruef_intervall_monate: 12, wartung_intervall_monate: null, wartung_text: "", gewicht_kg: null, plansymbol: "", laenge_m: null };
+  bestand: 0, mindestbestand: null, einheit: "Stück", pruefpflichtig: true, pruef_intervall_monate: 12, wartung_intervall_monate: null, wartung_text: "", gewicht_kg: null, lagerort_id: null, plansymbol: "", laenge_m: null };
 
 export function ArtikelFormular({ params }) {
   const { api, navigiere } = useLager();
   const neu = !params.id;
   const kats = useDaten(() => api.get("/api/v1/kategorien"), []);
+  const orte = useDaten(() => api.get("/api/v1/lagerorte"), []);
   const cases = useDaten(() => api.get("/api/v1/artikel?limit=500"), []);
   const f = useFormular({ ...LEER, anzahl: 0, kennzeichnung: "qr" });
   const [art, setArt] = useState("geraet");
@@ -50,6 +51,8 @@ export function ArtikelFormular({ params }) {
           <Feld label="Name" pflicht fehler={f.fehler.name}><Eingabe value={w.name} onChange={f.setze("name")} autoFocus={neu} /></Feld>
           <Feld label="Kategorie" pflicht fehler={f.fehler.kategorie_id}><Auswahl leer="– wählen –" value={w.kategorie_id ?? ""} onChange={(e) => f.setze("kategorie_id")(e.target.value ? Number(e.target.value) : null)}
             optionen={(kats.daten || []).map((k) => ({ wert: k.id, titel: `${k.name} (${k.praefix})` }))} /></Feld>
+          {sichtbar.has("lagerort_id") && <Feld label="Lagerort" hinweis="Regalplatz, wird beim Packen angezeigt"><Auswahl leer="– kein fester Platz –" value={w.lagerort_id ?? ""} onChange={(e) => f.setze("lagerort_id")(e.target.value ? Number(e.target.value) : null)}
+            optionen={(orte.daten?.zeilen || []).filter((o) => o.aktiv || o.id === w.lagerort_id).map((o) => ({ wert: o.id, titel: o.bereich ? `${o.name} (${o.bereich})` : o.name }))} /></Feld>}
           {sichtbar.has("hersteller") && <Feld label="Hersteller"><Eingabe value={w.hersteller} onChange={f.setze("hersteller")} /></Feld>}
           {art === "kabel" && <Feld label="Länge in m" pflicht fehler={f.fehler.laenge_m}><Eingabe type="number" step="0.5" min="0" value={w.laenge_m ?? ""} onChange={zahl("laenge_m")} /></Feld>}
           <Feld label={art === "leistung" ? "Tagessatz" : "Mietpreis pro Stück und Tag"} fehler={f.fehler.preis_tag}><GeldEingabe cent={w.preis_tag} onCent={f.setze("preis_tag")} /></Feld>
@@ -121,6 +124,7 @@ export function ArtikelDetail({ params }) {
       <Section titel="Daten">
         <div className="lp-raster">
           <div><div className="lp-label">Mietpreis/Tag</div>{euro(a.preis_tag)}</div>
+          {a.lagerort && <div><div className="lp-label">Lagerort</div>{a.lagerort}</div>}
           {a.folgetag_prozent != null && <div><div className="lp-label">Folgetage</div>{a.folgetag_prozent} %</div>}
           {a.mengenschritt > 1 && <div><div className="lp-label">Set</div>{a.mengenschritt} Stück</div>}
           {a.laenge_m && <div><div className="lp-label">Länge</div>{String(a.laenge_m).replace(".", ",")} m</div>}

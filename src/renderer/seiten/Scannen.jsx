@@ -1,6 +1,7 @@
 // Scannen (FA-15), Packansicht je Projekt (FA-17) mit Verladen (R-60/R-61), Rückgabeansicht (FA-18) mit Tasche (R-46, R-48) und Funktionstest (R-47).
+import { SchadenListe } from "@lager/ui/schaeden.jsx";
 import React, { useState } from "react";
-import { Seite, Section, Knopf, Tabelle, Auswahl, Feld, Eingabe, Meldung, Badge, Leerzustand, Toggle, useDaten, useBestaetigung } from "@lager/ui/bausteine.jsx";
+import { Seite, Section, Knopf, Tabelle, Auswahl, Feld, Eingabe, Meldung, Badge, Leerzustand, Toggle, Icon, useDaten, useBestaetigung } from "@lager/ui/bausteine.jsx";
 import { useLager, useLive } from "@lager/ui/huelle.jsx";
 import { ScanPanel } from "@lager/ui/scannen.jsx";
 import { TaschenKarte, FunktionstestKarte, useFunktionstestSchalter } from "@lager/ui/rueckgabe.jsx";
@@ -113,6 +114,7 @@ export function Packansicht({ params }) {
         {!s.angebot ? <Leerzustand text="Für dieses Projekt gibt es noch kein Angebot. Gescannte Geräte erscheinen unten." icon="ClipboardList" /> :
           <Tabelle zeilen={s.zeilen} schluessel="artikel_id" leer="Keine packbaren Positionen." spalten={[
             { titel: "Artikel", wert: (z) => <div><strong>{z.artikel}</strong><span className="lp-meta"> · {z.kategorie}</span>
+              {(z.lagerort || z.lagerorte_weitere?.length > 0) && <div className="lp-meta" data-testid="lagerort"><Icon name="MapPin" size={12} /> {[z.lagerort, ...(z.lagerorte_weitere || [])].filter(Boolean).join(", ")}</div>}
               {z.set && <div className="lp-meta">{z.set.text}{z.set.vorschlag?.length ? ` · Vorschlag: ${z.set.vorschlag.map((t) => t.code).join(", ")}` : ""}</div>}
               {z.inhalt && <div className="lp-meta">{z.inhalt.text}</div>}
               {z.verbrauch && <div className="lp-meta">Verbrauch – von Hand kontrollieren</div>}</div> },
@@ -179,6 +181,7 @@ export function Rueckgabeansicht({ params }) {
       {test && <FunktionstestKarte key={test} code={test} onFertig={(m) => { setTest(null); setMeldung(m); d.laden(); }} />}
       {tasche && <TaschenKarte tasche={tasche} onNeu={(t) => { if (t) setTasche(t); d.laden(); }} onEnde={() => setTasche(null)} />}
       <DurchgangVerlauf projektId={id} onFehler={(t) => setMeldung({ level: "error", text: t })} />
+      <SchadenListe pfad={`/api/v1/projekte/${id}/schaeden`} projektId={id} darfMelden={darf} />
       <Section titel="Noch draußen" icon="Truck">
         <Tabelle zeilen={s.offen} leer="Alle Geräte sind zurück." onZeile={(g) => navigiere(`/geraete/${g.id}`)}
           spalten={[...geraetSpalten, { titel: "In Tasche", wert: (g) => g.tasche || "–" }]} />

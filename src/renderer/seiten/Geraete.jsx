@@ -46,6 +46,7 @@ export function GeraetPerCode({ params }) {
 export function GeraetDetail({ params }) {
   const { api, navigiere, nutzer, oeffneAndereApp } = useLager();
   const d = useDaten(() => api.get(`/api/v1/geraete/${params.id}`), [params.id]);
+  const orte = useDaten(() => api.get("/api/v1/lagerorte").catch(() => ({ zeilen: [] })), []);
   const [meldung, setMeldung] = useState(null);
   const [inhaltCode, setInhaltCode] = useState("");
   const [statusDialog, setStatusDialog] = useState(false);
@@ -79,6 +80,11 @@ export function GeraetDetail({ params }) {
           <div><div className="lp-label">Projekt</div>{g.projekt_id ? <a href="#" onClick={(e) => { e.preventDefault(); oeffneAndereApp(`/projekte/${g.projekt_id}`); }}>{g.projekt_nummer || `Projekt ${g.projekt_id}`}</a> : "–"}</div>
           {g.wartung_intervall_monate && <div><div className="lp-label">Wartung</div>{g.wartung_text || "Wartung"} alle {g.wartung_intervall_monate} Monate<div className="lp-meta">zuletzt {g.letzte_wartung ? datumAnzeige(g.letzte_wartung) : "nie"}</div></div>}
           <div><div className="lp-label">Liegt in Case</div>{g.case_code ? <a href={`#/geraete/${g.case_id}`}>{g.case_code}</a> : "–"}</div>
+          <div><div className="lp-label">Lagerort</div>{darfG
+            ? <Auswahl aria-label="Lagerort" leer={g.artikel_lagerort_id ? "wie Artikel" : "– kein fester Platz –"} value={g.lagerort_id ?? ""}
+              onChange={(e) => aktion(() => api.put(`/api/v1/geraete/${g.id}`, { lagerort_id: e.target.value ? Number(e.target.value) : null }))}
+              optionen={(orte.daten?.zeilen || []).filter((o) => o.aktiv || o.id === g.lagerort_id).map((o) => ({ wert: o.id, titel: o.name }))} />
+            : g.lagerort || "–"}{darfG && !g.eigener_lagerort && g.lagerort && <div className="lp-meta">{g.lagerort} (vom Artikel)</div>}</div>
           <div><div className="lp-label">Seriennummer</div>{g.seriennummer || "–"}</div>
           <div><div className="lp-label">Alte Prüf-ID</div>{g.alte_pruef_id || "–"}</div>
           <div><div className="lp-label">Artikel</div><a href={`#/material/${g.artikel_id}`}>{g.artikel}</a></div>
