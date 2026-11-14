@@ -5,7 +5,7 @@ import { ArtikelFormular, ArtikelDetail } from "./seiten/Artikel.jsx";
 import { GeraeteListe, GeraetDetail, GeraetPerCode } from "./seiten/Geraete.jsx";
 import { EtikettenSeite, BestellungNeu, BestellungDetail, VorlageDesigner, EtikettenDruck } from "./seiten/Etiketten.jsx";
 import { KabelAssistent } from "./seiten/KabelAssistent.jsx";
-import { ScanSeite, Packansicht } from "./seiten/Scannen.jsx";
+import { ScanSeite, Packansicht, Rueckgabeansicht } from "./seiten/Scannen.jsx";
 import { normalisiereCode, istGeraetecode, normalisiereProjektcode } from "@lager/domain/codes.js";
 
 import { VerwaltungStart, ScannerVerwaltung } from "@lager/ui/verwaltung.jsx";
@@ -27,6 +27,7 @@ export const SEITEN = [
   { muster: "/etiketten/vorlagen/:id", Komponente: VorlageDesigner },
   { muster: "/scan", Komponente: ScanSeite },
   { muster: "/projekte/:id/packen", Komponente: Packansicht },
+  { muster: "/projekte/:id/rueckgabe", Komponente: Rueckgabeansicht },
   { muster: "/verwaltung", Komponente: VerwaltungStart },
   { muster: "/verwaltung/scanner", Komponente: ScannerVerwaltung },
 ];
