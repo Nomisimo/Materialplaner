@@ -10,6 +10,7 @@ import { LadezonenSeite } from "./seiten/Ladezonen.jsx";
 import { normalisiereCode, istGeraetecode, normalisiereProjektcode } from "@lager/domain/codes.js";
 
 import { SuchSeite } from "@lager/ui/uebersicht.jsx";
+import { BenutzerVerwaltung, RollenVerwaltung, EinstellungenSeite, SicherungSeite, SicherheitSeite, SystemSeite } from "@lager/ui/verwaltung-system.jsx";
 import { VerwaltungStart, ScannerVerwaltung, ArbeitsplatzVerwaltung } from "@lager/ui/verwaltung.jsx";
 
 export const SEITEN = [
@@ -33,6 +34,12 @@ export const SEITEN = [
   { muster: "/zonen", Komponente: LadezonenSeite },
   { muster: "/suche", Komponente: SuchSeite },
   { muster: "/verwaltung", Komponente: VerwaltungStart },
+  { muster: "/verwaltung/benutzer", Komponente: BenutzerVerwaltung },
+  { muster: "/verwaltung/rollen", Komponente: RollenVerwaltung },
+  { muster: "/verwaltung/einstellungen", Komponente: EinstellungenSeite },
+  { muster: "/verwaltung/sicherung", Komponente: SicherungSeite },
+  { muster: "/verwaltung/sicherheit", Komponente: SicherheitSeite },
+  { muster: "/verwaltung/system", Komponente: SystemSeite },
   { muster: "/verwaltung/scanner", Komponente: ScannerVerwaltung },
   { muster: "/verwaltung/arbeitsplaetze", Komponente: ArbeitsplatzVerwaltung },
 ];
