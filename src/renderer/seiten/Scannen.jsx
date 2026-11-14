@@ -50,6 +50,25 @@ export function ScanSeite({ query }) {
 }
 
 /* ── Packansicht je Projekt (FA-17, FA-19) ── */
+/** FA-20/FA-21: Verlauf je Durchgang (Verladen, Rückgabe) mit Lieferschein bzw. Rückgabeprotokoll. */
+function DurchgangVerlauf({ projektId, onFehler }) {
+  const { api } = useLager();
+  const v = useDaten(() => api.get(`/api/v1/projekte/${projektId}/durchgaenge`), [projektId]);
+  useLive(["packen", "projekt"], (m) => { if (!m.projekt || m.projekt === projektId || m.id === projektId) v.laden(); });
+  const beleg = (d) => ladeHerunter(api, `/api/v1/durchgaenge/${d.id}/pdf?download=1`, `${d.art === "verladen" ? "Lieferschein" : "Rückgabeprotokoll"} ${d.nr}.pdf`).catch((e) => onFehler(fehlerText(e)));
+  return (
+    <Section titel="Verlauf (Verladen und Rückgaben)" icon="History">
+      <Tabelle zeilen={v.daten?.zeilen || []} leer="Noch nicht verladen oder zurückgegeben." spalten={[
+        { titel: "Durchgang", wert: (d) => <strong>{d.art === "verladen" ? (d.nr > 1 ? `Nachlieferung ${d.nr - 1}` : "Verladen") : `Rückgabe ${d.nr}`}</strong> },
+        { titel: "Zeit", wert: (d) => zeitpunktAnzeige(d.zeit) },
+        { titel: "Person", wert: (d) => d.von || "–" },
+        { titel: "Geräte", wert: (d) => (d.art === "verladen" ? `${d.anzahl} übergeben${d.neu ? ` · ${d.neu} neu` : ""}` : `${d.anzahl} zurück · ${d.fehlt} fehlen · ${d.defekt} defekt`) },
+        { titel: "", wert: (d) => <Knopf klein icon="FileText" onClick={() => beleg(d)}>{d.art === "verladen" ? "Lieferschein" : "Rückgabeprotokoll"}</Knopf> },
+      ]} />
+    </Section>
+  );
+}
+
 export function Packansicht({ params }) {
   const { api, navigiere, nutzer } = useLager();
   const id = Number(params.id);
@@ -89,6 +108,7 @@ export function Packansicht({ params }) {
       {darf && <Section titel="Scannen" icon="ScanLine">
         <ScanPanel modus="packen" projektId={id} angebotId={s.angebot?.id || null} onErgebnis={() => d.laden()} />
       </Section>}
+      <DurchgangVerlauf projektId={id} onFehler={(t) => setMeldung({ level: "error", text: t })} />
       <Section titel="Packliste" icon="ClipboardList">
         {!s.angebot ? <Leerzustand text="Für dieses Projekt gibt es noch kein Angebot. Gescannte Geräte erscheinen unten." icon="ClipboardList" /> :
           <Tabelle zeilen={s.zeilen} schluessel="artikel_id" leer="Keine packbaren Positionen." spalten={[
@@ -130,6 +150,12 @@ export function Rueckgabeansicht({ params }) {
     <Seite titel={`Rückgabe ${p.nummer} ${p.name}`} untertitel={`${p.kunde_firma || p.kunde} · ${zeitraum(p)} · ${PROJEKT_STATUS[p.status]}`}
       aktionen={<>
         <Knopf icon="ClipboardList" onClick={() => navigiere(`/projekte/${id}/packen`)}>Packansicht</Knopf>
+        {darf && <Knopf art="primaer" icon="FileCheck" onClick={async () => {
+          if (!(await fragen({ titel: "Rückgabe abschließen?", knopf: "Abschließen", gefahr: false,
+            text: `Hält fest, was seit dem letzten Abschluss zurückkam${s.offen.length ? `, und dass ${s.offen.length} Gerät(e) noch fehlen` : ""}. Danach kannst du das Rückgabeprotokoll drucken. Weitere Rückgaben bleiben möglich.` }))) return;
+          try { const r = await api.post(`/api/v1/projekte/${id}/rueckgabe-abschliessen`, {}); setMeldung({ level: r.level, text: r.text }); d.laden(); }
+          catch (e) { setMeldung({ level: "error", text: fehlerText(e) }); }
+        }}>Rückgabe abschließen</Knopf>}
         {darf && s.offen.length > 0 && <Knopf icon="AlertTriangle" onClick={async () => {
           if (!(await fragen({ titel: "Alle offenen als vermisst melden?", knopf: "Als vermisst melden",
             text: `${s.offen.length} Gerät(e) sind noch nicht zurück: ${s.offen.map((g) => g.code).join(", ")}. Sie bleiben am Projekt und gelten als vermisst, bis sie wieder auftauchen.` }))) return;
@@ -152,6 +178,7 @@ export function Rueckgabeansicht({ params }) {
       </Section>}
       {test && <FunktionstestKarte key={test} code={test} onFertig={(m) => { setTest(null); setMeldung(m); d.laden(); }} />}
       {tasche && <TaschenKarte tasche={tasche} onNeu={(t) => { if (t) setTasche(t); d.laden(); }} onEnde={() => setTasche(null)} />}
+      <DurchgangVerlauf projektId={id} onFehler={(t) => setMeldung({ level: "error", text: t })} />
       <Section titel="Noch draußen" icon="Truck">
         <Tabelle zeilen={s.offen} leer="Alle Geräte sind zurück." onZeile={(g) => navigiere(`/geraete/${g.id}`)}
           spalten={[...geraetSpalten, { titel: "In Tasche", wert: (g) => g.tasche || "–" }]} />
