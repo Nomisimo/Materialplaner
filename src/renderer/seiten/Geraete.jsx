@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Seite, Section, Knopf, Tabelle, Eingabe, Auswahl, Feld, Meldung, Textfeld, useDaten, useBestaetigung, Badge, Modal } from "@lager/ui/bausteine.jsx";
 import { useLager, useLive } from "@lager/ui/huelle.jsx";
-import { STATUS, uebergangErlaubt, istGesperrt } from "@lager/domain/geraet.js";
+import { STATUS, MANUELLER_STATUS, uebergangErlaubt, istGesperrt } from "@lager/domain/geraet.js";
 import { PRUEF_TEXT } from "@lager/domain/pruefung.js";
 import { datumAnzeige, zeitpunktAnzeige } from "@lager/domain/zeit.js";
 import { fehlerText } from "@lager/ui/texte.js";
@@ -124,7 +124,7 @@ function StatusDialog({ g, onFertig }) {
   const [nach, setNach] = useState("");
   const [notiz, setNotiz] = useState("");
   const [fehler, setFehler] = useState(null);
-  const moeglich = Object.keys(STATUS).filter((s) => uebergangErlaubt(g.status, s));
+  const moeglich = MANUELLER_STATUS.filter((s) => uebergangErlaubt(g.status, s));
   const endgueltig = nach === "ausgemustert" || nach === "verkauft";
   return (
     <Modal titel={`Status von ${g.code} ändern`} onSchliessen={() => onFertig(null)}
