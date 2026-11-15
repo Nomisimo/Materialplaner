@@ -107,7 +107,7 @@ export function ArtikelDetail({ params }) {
   useLive(["artikel", "geraet"], () => d.laden());
   const a = d.daten;
   if (d.fehler) return <Seite titel="Material"><Meldung level="error" text={d.fehler} /></Seite>;
-  if (!a) return null;
+  if (!a) return <Seite titel="Material"><p className="lp-hinweis">Lädt …</p></Seite>;
   const darfM = nutzer.admin || nutzer.rechte.material === "w";
   const darfP = nutzer.admin || nutzer.rechte.packen === "w";
   const darfG = nutzer.admin || nutzer.rechte.geraete === "w";

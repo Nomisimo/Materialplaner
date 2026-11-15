@@ -54,7 +54,7 @@ export function GeraetDetail({ params }) {
   useLive("geraet", () => d.laden());
   const g = d.daten;
   if (d.fehler) return <Seite titel="Gerät"><Meldung level="error" text={d.fehler} /></Seite>;
-  if (!g) return null;
+  if (!g) return <Seite titel="Gerät"><p className="lp-hinweis">Lädt …</p></Seite>;
   const darfG = nutzer.admin || nutzer.rechte.geraete === "w";
   const darfP = nutzer.admin || nutzer.rechte.packen === "w";
   const aktion = async (fn) => { try { const r = await fn(); setMeldung({ level: r.level || "success", text: r.text }); d.laden(); return true; } catch (e) { setMeldung({ level: "error", text: fehlerText(e) }); return false; } };
