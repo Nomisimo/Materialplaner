@@ -54,8 +54,8 @@ export function LadezonenSeite() {
             {z.beschreibung && <p className="lp-meta" style={{ marginTop: 0 }}>{z.beschreibung}</p>}
             {z.projekte.length === 0 ? <p className="lp-hinweis" style={{ margin: 0 }}>Leer.</p> :
               <ul className="lp-liste">{z.projekte.map((p) => (
-                <li key={p.id} className="lp-zeile" style={{ alignItems: "center" }}>
-                  <span style={{ flex: 1 }}><strong>{p.nummer}</strong> {p.name}<span className="lp-meta"> · {termin(p)} · seit {zeitpunktAnzeige(p.zone_seit)}</span></span>
+                <li key={p.id} className="lp-zeile" style={{ alignItems: "center", flexWrap: "wrap" }}>
+                  <span style={{ flex: "1 1 160px", minWidth: 0, overflowWrap: "anywhere" }}><strong>{p.nummer}</strong> {p.name}<span className="lp-meta"> · {termin(p)} · seit {zeitpunktAnzeige(p.zone_seit)}</span></span>
                   <Knopf klein icon="ClipboardList" onClick={() => navigiere(`/projekte/${p.id}/packen`)}>Packen</Knopf>
                   {darf && <Knopf klein art="geist" onClick={() => aktion(() => api.post(`/api/v1/projekte/${p.id}/zone-freigeben`, {}))}>Freigeben</Knopf>}
                 </li>))}</ul>}

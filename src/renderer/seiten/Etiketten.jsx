@@ -355,7 +355,7 @@ export function EtikettenDruck({ query }) {
     try {
       // Desktop: druckt den Bogen mit Seitengröße der Vorlage; Browser: Druckfenster mit je einem Etikett pro Seite (WEB-04)
       const r = await plattform.drucken({ breite_mm: g.breite_mm, hoehe_mm: g.hoehe_mm, titel: "Etiketten", seiten: g.etiketten.map((e) => e.svg) });
-      setMeldung(r.ok ? { level: "success", text: `${g.etiketten.length} Etikett(en) ${g.breite_mm} × ${g.hoehe_mm} mm an den Drucker gesendet.` } : { level: r.abgebrochen ? "info" : "error", text: r.text });
+      setMeldung(r.ok ? { level: "success", text: r.web ? `Druckfenster mit ${g.etiketten.length} Etikett(en) ${g.breite_mm} × ${g.hoehe_mm} mm geöffnet. Wähle dort den Etikettendrucker.` : `${g.etiketten.length} Etikett(en) ${g.breite_mm} × ${g.hoehe_mm} mm an den Drucker gesendet.` } : { level: r.abgebrochen ? "info" : "error", text: r.text });
     } catch (e) { setMeldung({ level: "error", text: `Drucken fehlgeschlagen: ${e.message}. Prüfe den Drucker und versuche es erneut.` }); }
     finally { setBogen(null); }
   };
