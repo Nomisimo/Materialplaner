@@ -17,7 +17,7 @@ export function GeraeteListe({ query }) {
   const l = useDaten(() => api.get(`/api/v1/geraete?${new URLSearchParams(Object.entries(f).filter(([, v]) => v))}`), [f.q, f.status, f.pruef, f.projekt]);
   useLive("geraet", () => l.laden());
   return (
-    <Seite titel="Geräte" untertitel="Einzelstücke mit Code">
+    <Seite titel="Geräte" untertitel="Einzelstücke mit Code" tour="geraete">
       <Section>
         <div className="lp-zeile" style={{ marginBottom: 12 }}>
           <div style={{ flex: "1 1 240px" }}><Eingabe placeholder="Code, Artikel, Seriennummer, alte Prüf-ID" aria-label="Suchen" value={f.q} onChange={(e) => setF({ ...f, q: e.target.value })} /></div>

@@ -19,7 +19,7 @@ export function MaterialListe({ query }) {
     <Seite titel="Material" untertitel="Materialstamm: Artikel, Cases, Verbrauch, Leistungen, Kabel"
       aktionen={darfAendern && <>
         <Knopf icon="Cable" onClick={() => navigiere("/material/kabel-assistent")}>Kabel-Assistent</Knopf>
-        <Knopf art="primaer" icon="Plus" onClick={() => navigiere("/material/neu")}>Material aufnehmen</Knopf></>}>
+        <Knopf art="primaer" icon="Plus" tour="material-aufnehmen" onClick={() => navigiere("/material/neu")}>Material aufnehmen</Knopf></>}>
       <Tabs tabs={[{ id: "artikel", titel: "Artikel" }, { id: "kategorien", titel: "Kategorien" }]} aktiv={tab} onWechsel={setTab} />
       {tab === "kategorien" ? <Kategorien kats={kats} darfAendern={darfAendern} /> : (
         <Section>
