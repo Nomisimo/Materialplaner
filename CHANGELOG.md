@@ -20,6 +20,8 @@ Materialplaner und Productionplaner tragen immer dieselbe Versionsnummer.
 - Etiketten im Browser: Meldung sagt jetzt ehrlich „Druckfenster geöffnet“
 - Ladezonen: lange Zeilen brechen um statt abgeschnitten zu werden
 - Kopfleiste passt auch bei 1024 px Breite
+- Behoben: Kam ein Formular verzögert vom Server, konnte es eine schon gemachte Eingabe überschreiben
+- Behoben: Live-Updates kamen manchmal an, bevor die Änderung gespeichert war (Anzeige blieb auf altem Stand)
 
 ## [0.2.0-beta.1] – 2026-11-15
 
