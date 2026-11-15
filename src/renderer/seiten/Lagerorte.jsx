@@ -6,7 +6,7 @@ import { fehlerText } from "@lager/ui/texte.js";
 
 function OrtDialog({ ort, onFertig, onSchliessen }) {
   const { api } = useLager();
-  const f = useFormular({ name: ort?.name || "", bereich: ort?.bereich || "", notiz: ort?.notiz || "", aktiv: ort?.aktiv ?? true });
+  const f = useFormular({ name: ort?.name || "", bereich: ort?.bereich || "", notiz: ort?.notiz || "", aktiv: ort?.aktiv ?? true, version: ort?.version });
   const speichern = async () => {
     const r = await f.absenden((w) => (ort ? api.put(`/api/v1/lagerorte/${ort.id}`, w) : api.post("/api/v1/lagerorte", w)));
     if (r) onFertig(r);

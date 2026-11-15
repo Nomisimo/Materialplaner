@@ -159,7 +159,7 @@ export function BestellungDetail({ params }) {
 }
 
 function BestellKopf({ b, onSpeichern }) {
-  const [w, setW] = useState({ lieferant: b.lieferant, notiz: b.notiz, bestellt_am: b.bestellt_am || "" });
+  const [w, setW] = useState({ lieferant: b.lieferant, notiz: b.notiz, bestellt_am: b.bestellt_am || "", version: b.version });
   return (
     <>
       <div className="lp-raster">

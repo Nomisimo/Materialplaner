@@ -1,7 +1,7 @@
 // Scannen (FA-15), Packansicht je Projekt (FA-17) mit Verladen (R-60/R-61), Rückgabeansicht (FA-18) mit Tasche (R-46, R-48) und Funktionstest (R-47).
 import { SchadenListe } from "@lager/ui/schaeden.jsx";
 import React, { useState } from "react";
-import { Seite, Section, Knopf, Tabelle, Auswahl, Feld, Eingabe, Meldung, Badge, Leerzustand, Toggle, Icon, useDaten, useBestaetigung } from "@lager/ui/bausteine.jsx";
+import { Seite, Section, Knopf, Tabelle, Auswahl, Feld, Eingabe, Meldung, Badge, Leerzustand, Toggle, Icon, useDaten, useBestaetigung, Praesenz } from "@lager/ui/bausteine.jsx";
 import { useLager, useLive } from "@lager/ui/huelle.jsx";
 import { ScanPanel } from "@lager/ui/scannen.jsx";
 import { TaschenKarte, FunktionstestKarte, useFunktionstestSchalter } from "@lager/ui/rueckgabe.jsx";
@@ -76,7 +76,15 @@ export function Packansicht({ params }) {
   const d = useDaten(() => api.get(`/api/v1/projekte/${id}/packstatus`), [id]);
   const [meldung, setMeldung] = useState(null);
   const [fragen, dialog] = useBestaetigung();
-  useLive(["packen", "geraet", "projekt", "angebot"], (m) => { if (!m.projekt || m.projekt === id || m.id === id) d.laden(); });
+  const [geloescht, setGeloescht] = useState(null);
+  const [hinweis, setHinweis] = useState(null);
+  useLive(["packen", "geraet", "projekt", "angebot"], (m) => {
+    if (m.typ === "projekt.geaendert" && m.id === id && m.geloescht) { setGeloescht({ von: m.von }); return; } // GLEICH-04
+    if (m.typ?.startsWith("angebot.") && m.projekt_id === id) setHinweis(`${m.von ? `${m.von} hat` : "Jemand hat"} das Angebot geändert. Die Packliste ist aktualisiert.`); // GLEICH-02
+    if (!m.projekt || m.projekt === id || m.id === id) d.laden();
+  });
+  if (geloescht) return <Seite titel="Packen"><Meldung level="error" text={`Das Projekt wurde ${geloescht.von ? `von ${geloescht.von} ` : ""}gelöscht.`}>
+    <div className="lp-zeile" style={{ marginTop: 8 }}><Knopf icon="ArrowLeft" onClick={() => navigiere("/scan")}>Zurück zur Liste</Knopf></div></Meldung></Seite>;
   if (d.fehler) return <Seite titel="Packen"><Meldung level="error" text={d.fehler} /></Seite>;
   const s = d.daten;
   if (!s) return <Seite titel="Packen"><p className="lp-hinweis">Lädt …</p></Seite>;
@@ -86,6 +94,7 @@ export function Packansicht({ params }) {
   return (
     <Seite titel={`Packen ${p.nummer} ${p.name}`} untertitel={`${p.kunde_firma || p.kunde} · ${zeitraum(p)} · ${PROJEKT_STATUS[p.status]}${s.angebot ? ` · Packliste aus ${s.angebot.nummer}` : ""}`}
       aktionen={<>
+        <Praesenz ort={`projekt:${id}`} />
         {s.angebot && <Knopf icon="Printer" onClick={() => ladeHerunter(api, `/api/v1/angebote/${s.angebot.id}/packliste.pdf?download=1`, `Packliste ${p.nummer}.pdf`).catch((e) => setMeldung({ level: "error", text: fehlerText(e) }))}>Packliste drucken</Knopf>}
         <Knopf icon="ScanLine" onClick={() => navigiere(`/projekte/${id}/rueckgabe`)}>Rückgabe</Knopf>
         {darf && !p.gepackt_am && <Knopf art="primaer" icon="Truck" onClick={async () => {
@@ -97,6 +106,7 @@ export function Packansicht({ params }) {
         {darf && p.gepackt_am && <Knopf icon="RotateCw" onClick={() => aktion(() => api.post(`/api/v1/projekte/${id}/packen-oeffnen`, {}))}>Packen wieder öffnen</Knopf>}
       </>}>
       {dialog}
+      {hinweis && <Meldung level="info" text={hinweis} onSchliessen={() => setHinweis(null)} />}
       {meldung && <Meldung {...meldung} onSchliessen={() => setMeldung(null)} />}
       {p.gepackt_am && meldung?.level !== "success" && <Meldung level="success" text={`Verladen am ${zeitpunktAnzeige(p.gepackt_am)}${p.gepackt_von_name ? ` von ${p.gepackt_von_name}` : ""}. Weitere Scans bleiben möglich (Nachpacken).`} />}
       <Section titel="Fortschritt" icon="ListChecks">

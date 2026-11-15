@@ -82,7 +82,7 @@ export function GeraetDetail({ params }) {
           <div><div className="lp-label">Liegt in Case</div>{g.case_code ? <a href={`#/geraete/${g.case_id}`}>{g.case_code}</a> : "–"}</div>
           <div><div className="lp-label">Lagerort</div>{darfG
             ? <Auswahl aria-label="Lagerort" leer={g.artikel_lagerort_id ? "wie Artikel" : "– kein fester Platz –"} value={g.lagerort_id ?? ""}
-              onChange={(e) => aktion(() => api.put(`/api/v1/geraete/${g.id}`, { lagerort_id: e.target.value ? Number(e.target.value) : null }))}
+              onChange={(e) => aktion(() => api.put(`/api/v1/geraete/${g.id}`, { lagerort_id: e.target.value ? Number(e.target.value) : null, version: g.version }))}
               optionen={(orte.daten?.zeilen || []).filter((o) => o.aktiv || o.id === g.lagerort_id).map((o) => ({ wert: o.id, titel: o.name }))} />
             : g.lagerort || "–"}{darfG && !g.eigener_lagerort && g.lagerort && <div className="lp-meta">{g.lagerort} (vom Artikel)</div>}</div>
           <div><div className="lp-label">Seriennummer</div>{g.seriennummer || "–"}</div>
@@ -116,7 +116,7 @@ export function GeraetDetail({ params }) {
 function Stammfelder({ g, onGespeichert }) {
   const { api } = useLager();
   const [offen, setOffen] = useState(false);
-  const [w, setW] = useState({ seriennummer: g.seriennummer, alte_pruef_id: g.alte_pruef_id, notizen: g.notizen });
+  const [w, setW] = useState({ seriennummer: g.seriennummer, alte_pruef_id: g.alte_pruef_id, notizen: g.notizen, version: g.version });
   if (!offen) return <div style={{ marginTop: 10 }}><Knopf klein icon="Pencil" onClick={() => setOffen(true)}>Seriennummer / Notizen</Knopf></div>;
   return (
     <div className="lp-raster" style={{ marginTop: 12 }}>

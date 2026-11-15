@@ -20,7 +20,7 @@ export function ArtikelFormular({ params }) {
   const kats = useDaten(() => api.get("/api/v1/kategorien"), []);
   const orte = useDaten(() => api.get("/api/v1/lagerorte"), []);
   const cases = useDaten(() => api.get("/api/v1/artikel?limit=500"), []);
-  const f = useFormular({ ...LEER, anzahl: 0, kennzeichnung: "qr" });
+  const f = useFormular({ ...LEER, anzahl: 0, kennzeichnung: "qr" }, { live: neu ? null : { typ: "artikel", id: params.id }, laden: () => api.get(`/api/v1/artikel/${params.id}`), zurueck: () => navigiere("/material") });
   const [art, setArt] = useState("geraet");
   useEffect(() => {
     if (neu) return;
@@ -91,6 +91,7 @@ export function ArtikelFormular({ params }) {
             <Auswahl value={w.kennzeichnung} onChange={f.setze("kennzeichnung")} optionen={[{ wert: "qr", titel: "QR – jetzt anlegen und drucken" }, { wert: "bestellen", titel: "Etiketten bestellen" }, { wert: "keine", titel: "Keine" }]} /></Feld>}
         </div>
       </Section>}
+      {f.band}
       {f.meldung && <Meldung {...f.meldung} />}
       <div className="lp-zeile"><Knopf art="primaer" icon="Save" onClick={speichern}>Speichern</Knopf></div>
     </Seite>

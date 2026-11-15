@@ -18,7 +18,7 @@ export function PlansymboleSeite() {
   const darf = nutzer.admin || nutzer.rechte?.material === "w";
   const lade = (pfad, name) => ladeHerunter(api, pfad, name).catch((e) => setM({ level: "error", text: fehlerText(e) }));
   const setze = async (a, plansymbol) => {
-    try { await api.put(`/api/v1/artikel/${a.id}`, { plansymbol }); setM({ level: "success", text: `Symbol für „${a.name}“ gespeichert. Die Symbolbibliothek ist aktualisiert.` }); d.laden(); }
+    try { await api.put(`/api/v1/artikel/${a.id}`, { plansymbol, version: a.version }); setM({ level: "success", text: `Symbol für „${a.name}“ gespeichert. Die Symbolbibliothek ist aktualisiert.` }); d.laden(); }
     catch (e) { setM({ level: "error", text: fehlerText(e) }); }
   };
   const zeilen = (d.daten?.zeilen || []).filter((a) => !q || `${a.name} ${a.kategorie}`.toLowerCase().includes(q.toLowerCase()));
