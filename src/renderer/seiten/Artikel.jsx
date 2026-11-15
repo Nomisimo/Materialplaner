@@ -24,7 +24,7 @@ export function ArtikelFormular({ params }) {
   const [art, setArt] = useState("geraet");
   useEffect(() => {
     if (neu) return;
-    api.get(`/api/v1/artikel/${params.id}`).then((a) => { f.setWerte({ ...LEER, ...a }); setArt(artVon(a)); });
+    api.get(`/api/v1/artikel/${params.id}`).then((a) => { f.geladen({ ...LEER, ...a }); setArt(artVon(a)); });
   }, [params.id]);
   const sichtbar = new Set(ART_FELDER[art]);
   const w = f.werte;
